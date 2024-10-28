@@ -27,7 +27,8 @@ class RegisterController extends Controller
                 'first_name' => 'bail|required|min:3',
                 'last_name' => 'bail|required|min:3',
                 'email' => 'bail|required|email|unique:users,email',
-                'password' => 'bail|required|string|min:6',
+                'password' => 'bail|required|string|min:8',
+                'confirm_password' => 'bail|required|string|same:password',
                 'phone' => 'bail|required|string',
                 'gender' => 'bail|required|string',
                 'date_of_birth' => 'bail|required|date',
@@ -54,7 +55,7 @@ class RegisterController extends Controller
             return ApiHelper::validResponse("Registration successful..", LoginService::apiAuthorized($user));
         } catch (ValidationException $e) {
             DB::rollback();
-            $message = "The given data was invalid.";
+            $message = $e->getMessage();
             return  ApiHelper::inputErrorResponse($message, ApiConstants::VALIDATION_ERR_CODE, $request, $e);
         } catch (\Exception $e) {
             DB::rollback();
